@@ -1,0 +1,58 @@
+{% extends "risks/base.html" %}
+{% block title %}Dashboard | RiskTrack{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div><h1 class="h2 mb-1">Risk Dashboard</h1><p class="text-secondary mb-0">A live overview of the organisation's recorded risks.</p></div>
+  <a class="btn btn-primary" href="{% url 'risk_create' %}">+ Add new risk</a>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">Total risks</div><div class="kpi-number">{{ total }}</div></div></div></div>
+  <div class="col-6 col-xl-3"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">Open risks</div><div class="kpi-number">{{ open_count }}</div></div></div></div>
+  <div class="col-6 col-xl-3"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">High / Critical</div><div class="kpi-number text-danger">{{ high_critical }}</div></div></div></div>
+  <div class="col-6 col-xl-3"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">Mitigated</div><div class="kpi-number text-success">{{ mitigated_percent }}%</div></div></div></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-lg-4"><div class="card h-100"><div class="card-body"><h2 class="h5">Risks by level</h2><canvas id="levelChart"></canvas></div></div></div>
+  <div class="col-lg-4"><div class="card h-100"><div class="card-body"><h2 class="h5">Risks by category</h2><canvas id="categoryChart"></canvas></div></div></div>
+  <div class="col-lg-4"><div class="card h-100"><div class="card-body"><h2 class="h5">Risks by status</h2><canvas id="statusChart"></canvas></div></div></div>
+</div>
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 mb-0">Top 5 highest-scoring risks</h2><a href="{% url 'risk_list' %}">View all</a></div>
+    {% if top_risks %}
+    <div class="table-responsive"><table class="table align-middle">
+      <thead><tr><th>ID</th><th>Risk</th><th>Owner</th><th>Score</th><th>Level</th><th>Status</th></tr></thead>
+      <tbody>{% for risk in top_risks %}
+      <tr><td><a href="{% url 'risk_detail' risk.pk %}">{{ risk.risk_id }}</a></td><td>{{ risk.title }}</td><td>{{ risk.owner }}</td><td>{{ risk.risk_score }}</td><td><span class="badge risk-{{ risk.risk_level|lower }}">{{ risk.risk_level }}</span></td><td>{{ risk.status }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% else %}<p class="text-secondary mb-0">No risks have been added yet. Select “Add new risk” to get started.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const levelLabels = {{ level_labels|safe }};
+const levelValues = {{ level_values|safe }};
+const categoryLabels = {{ category_labels|safe }};
+const categoryValues = {{ category_values|safe }};
+const statusLabels = {{ status_labels|safe }};
+const statusValues = {{ status_values|safe }};
+new Chart(document.getElementById('levelChart'), {
+  type: 'doughnut',
+  data: { labels: levelLabels, datasets: [{ data: levelValues, backgroundColor: ['#2e9d68','#e4bd35','#ef8a36','#d74747'] }] },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+new Chart(document.getElementById('categoryChart'), {
+  type: 'bar',
+  data: { labels: categoryLabels, datasets: [{ label: 'Risks', data: categoryValues, backgroundColor: '#3977c5' }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('statusChart'), {
+  type: 'bar',
+  data: { labels: statusLabels, datasets: [{ label: 'Risks', data: statusValues, backgroundColor: '#6b7f9b' }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

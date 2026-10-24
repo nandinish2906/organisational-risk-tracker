@@ -1,0 +1,22 @@
+{% extends "risks/base.html" %}
+{% block title %}{{ risk.risk_id }} | RiskTrack{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><p class="text-secondary mb-1">{{ risk.risk_id }} · {{ risk.category }}</p><h1 class="h2">{{ risk.title }}</h1></div>
+  <div class="d-flex gap-2"><a class="btn btn-primary" href="{% url 'risk_update' risk.pk %}">Edit risk</a><a class="btn btn-outline-secondary" href="{% url 'risk_list' %}">Back to register</a></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-8"><div class="card mb-3"><div class="card-body"><h2 class="h5">Description</h2><p class="mb-0">{{ risk.description|linebreaksbr }}</p></div></div>
+  <div class="card"><div class="card-body"><h2 class="h5">Mitigation plan</h2><p class="mb-0">{{ risk.mitigation_plan|linebreaksbr }}</p></div></div></div>
+  <div class="col-lg-4"><div class="card"><div class="card-body">
+    <h2 class="h5 mb-3">Risk assessment</h2>
+    <div class="mb-3"><div class="text-secondary small">Score</div><div class="display-5 fw-bold">{{ risk.risk_score }}<span class="fs-6 text-secondary"> / 25</span></div></div>
+    <div class="mb-3"><div class="text-secondary small">Risk level</div><span class="badge risk-{{ risk.risk_level|lower }} fs-6">{{ risk.risk_level }}</span></div>
+    <div class="mb-3"><div class="text-secondary small">Likelihood × Impact</div>{{ risk.likelihood }} × {{ risk.impact }}</div>
+    <div class="mb-3"><div class="text-secondary small">Status</div>{{ risk.status }}</div>
+    <div class="mb-3"><div class="text-secondary small">Owner</div>{{ risk.owner }}</div>
+    <div class="mb-3"><div class="text-secondary small">Date identified</div>{{ risk.date_identified|date:"d M Y" }}</div>
+    <div><div class="text-secondary small">Due date</div>{{ risk.due_date|date:"d M Y"|default:"Not set" }}</div>
+  </div></div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "risks/base.html" %}
+{% block title %}{{ page_title }} | RiskTrack{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-8">
+  <div class="mb-3"><h1 class="h2">{{ page_title }}</h1><p class="text-secondary">Likelihood and impact determine the score automatically.</p></div>
+  <form method="post" class="card card-body">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+    <div class="score-preview alert alert-info"><strong>Preview score:</strong> <span id="scorePreview">Select likelihood and impact</span></div>
+    <div class="d-flex gap-2"><button class="btn btn-primary" type="submit">Save risk</button><a class="btn btn-outline-secondary" href="{% url 'risk_list' %}">Cancel</a></div>
+  </form>
+</div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('input, textarea, select').forEach(el => {
+  if (el.type !== 'hidden') el.classList.add('form-control');
+  if (el.tagName === 'SELECT') el.classList.add('form-select');
+});
+const likelihood = document.getElementById('id_likelihood');
+const impact = document.getElementById('id_impact');
+const preview = document.getElementById('scorePreview');
+function updatePreview() {
+  const l = Number(likelihood.value), i = Number(impact.value);
+  if (!l || !i) { preview.textContent = 'Select likelihood and impact'; return; }
+  const score = l * i;
+  const level = score >= 20 ? 'Critical' : score >= 12 ? 'High' : score >= 6 ? 'Medium' : 'Low';
+  preview.textContent = `${score} / 25 — ${level}`;
+}
+if (likelihood && impact) {
+  likelihood.addEventListener('change', updatePreview);
+  impact.addEventListener('change', updatePreview);
+  updatePreview();
+}
+</script>
+{% endblock %}

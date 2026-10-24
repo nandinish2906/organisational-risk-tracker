@@ -1,0 +1,28 @@
+{% extends "risks/base.html" %}
+{% block title %}Risk Register | RiskTrack{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><h1 class="h2 mb-1">Risk Register</h1><p class="text-secondary mb-0">Search, filter and manage recorded risks.</p></div>
+  <a class="btn btn-primary" href="{% url 'risk_create' %}">+ Add risk</a>
+</div>
+<form method="get" class="card card-body mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-lg-4"><label class="form-label" for="q">Search</label><input id="q" class="form-control" type="search" name="q" value="{{ search }}" placeholder="Risk ID, title or owner"></div>
+    <div class="col-md-4 col-lg-2"><label class="form-label">Category</label><select class="form-select" name="category"><option value="">All</option>{% for value,label in categories %}<option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="col-md-4 col-lg-2"><label class="form-label">Status</label><select class="form-select" name="status"><option value="">All</option>{% for value,label in statuses %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="col-md-4 col-lg-2"><label class="form-label">Level</label><select class="form-select" name="level"><option value="">All</option>{% for value,label in levels %}<option value="{{ value }}" {% if selected_level == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="col-lg-2 d-flex gap-2"><button class="btn btn-dark flex-grow-1" type="submit">Filter</button><a class="btn btn-outline-secondary" href="{% url 'risk_list' %}">Reset</a></div>
+  </div>
+</form>
+<div class="card"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+<thead><tr><th>ID</th><th>Title</th><th>Category</th><th>Owner</th><th>Score</th><th>Level</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody>
+{% for risk in risks %}
+<tr>
+<td>{{ risk.risk_id }}</td><td><a href="{% url 'risk_detail' risk.pk %}">{{ risk.title }}</a></td><td>{{ risk.category }}</td><td>{{ risk.owner }}</td><td class="fw-bold">{{ risk.risk_score }}</td><td><span class="badge risk-{{ risk.risk_level|lower }}">{{ risk.risk_level }}</span></td><td>{{ risk.status }}</td>
+<td class="text-nowrap"><a class="btn btn-sm btn-outline-primary" href="{% url 'risk_update' risk.pk %}">Edit</a>
+<form method="post" action="{% url 'risk_delete' risk.pk %}" class="d-inline" onsubmit="return confirm('Delete this risk permanently?');">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Delete</button></form></td>
+</tr>
+{% empty %}<tr><td colspan="8" class="text-center text-secondary py-4">No matching risks found.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

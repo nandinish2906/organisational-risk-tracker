@@ -1,0 +1,17 @@
+:root { --navy: #172b4d; --page: #f4f6fa; }
+body { background: var(--page); color: #253247; }
+.app-navbar { background: var(--navy); }
+.card { border: 1px solid #e5e9f0; border-radius: 14px; box-shadow: 0 3px 12px rgba(25, 45, 75, .04); }
+.kpi-card { min-height: 112px; }
+.kpi-label { color: #6b778c; font-size: .9rem; }
+.kpi-number { font-size: 2rem; font-weight: 750; margin-top: .2rem; }
+.table { margin-bottom: 0; }
+.table thead th { background: #f8f9fc; color: #596579; font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+.badge { padding: .45em .65em; }
+.risk-low { background: #d8f3e4; color: #17683d; }
+.risk-medium { background: #fff0bd; color: #775600; }
+.risk-high { background: #ffe0c2; color: #8a3d00; }
+.risk-critical { background: #fbdada; color: #9b1c1c; }
+form .form-control, form .form-select { border-color: #d8deea; }
+form .form-control:focus, form .form-select:focus { border-color: #7198d4; box-shadow: 0 0 0 .2rem rgba(57, 119, 197, .12); }
+canvas { max-height: 280px; }
