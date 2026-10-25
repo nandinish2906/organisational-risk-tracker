@@ -39,10 +39,28 @@ const categoryLabels = {{ category_labels|safe }};
 const categoryValues = {{ category_values|safe }};
 const statusLabels = {{ status_labels|safe }};
 const statusValues = {{ status_values|safe }};
-new Chart(document.getElementById('levelChart'), {
+ 
+  new Chart(document.getElementById('levelChart'), {
   type: 'doughnut',
-  data: { labels: levelLabels, datasets: [{ data: levelValues, backgroundColor: ['#2e9d68','#e4bd35','#ef8a36','#d74747'] }] },
-  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  data: {
+    labels: levelLabels,
+    datasets: [{
+      data: levelValues,
+      backgroundColor: levelLabels.map(level => {
+        const colors = {
+          'Critical': '#d74747',
+          'High': '#ef8a36',
+          'Medium': '#e4bd35',
+          'Low': '#2e9d68'
+        };
+        return colors[level] || '#9ca3af';
+      })
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } }
+  }
 });
 new Chart(document.getElementById('categoryChart'), {
   type: 'bar',
