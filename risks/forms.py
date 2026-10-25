@@ -1,8 +1,27 @@
+
 from django import forms
 from .models import Risk
 
 
 class RiskForm(forms.ModelForm):
+    likelihood = forms.TypedChoiceField(
+        choices=[("", "Select likelihood")] + [
+            (i, str(i)) for i in range(1, 6)
+        ],
+        coerce=int,
+        empty_value=None,
+        required=True,
+    )
+
+    impact = forms.TypedChoiceField(
+        choices=[("", "Select impact")] + [
+            (i, str(i)) for i in range(1, 6)
+        ],
+        coerce=int,
+        empty_value=None,
+        required=True,
+    )
+
     class Meta:
         model = Risk
         fields = [
@@ -15,9 +34,9 @@ class RiskForm(forms.ModelForm):
             "mitigation_plan": forms.Textarea(attrs={"rows": 3}),
             "date_identified": forms.DateInput(attrs={"type": "date"}),
             "due_date": forms.DateInput(attrs={"type": "date"}),
-            "likelihood": forms.Select(),
-            "impact": forms.Select(),
         }
+
+
 
     def clean(self):
         cleaned = super().clean()
